@@ -124,7 +124,14 @@ module "karpenter" {
   # Name needs to match role name passed to the EC2NodeClass
   node_iam_role_use_name_prefix   = false
   node_iam_role_name              = var.cluster_name
-  
+
+  irsa_oidc_provider_arn          = module.eks.oidc_provider_arn
+
+  create_iam_role      = true
+  create_instance_profile = true
+  create_node_iam_role = true
+
+  enable_irsa = true
   enable_pod_identity             = true
   create_pod_identity_association = true
 
@@ -133,14 +140,6 @@ module "karpenter" {
     AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
   }
 }
-
-output "karpenter_queue_name" {
-  description = "The namespace where Karpenter is installed"
-  value       = module.karpenter.queue_name
-  
-}
-
-
 
 ################################################################################
 # Helm charts
@@ -186,6 +185,8 @@ resource "kubectl_manifest" "karpenter_node_class" {
     kind: EC2NodeClass
     metadata:
       name: default
+      labels:
+        type: karpenter
     spec:
       amiFamily: AL2023
       role: ${module.karpenter.node_iam_role_name}
@@ -212,13 +213,16 @@ resource "kubectl_manifest" "karpenter_node_pool" {
       name: default
     spec:
       template:
+        metadata:
+          labels:
+            type: karpenter
         spec:
           nodeClassRef:
             apiVersion: karpenter.k8s.aws/v1beta1
             kind: EC2NodeClass
             name: default
           requirements:
-            - key: node.kubernetes.io/instance-type
+            - key: node.kubernetes.io/instance-type	
               operator: In
               values: ["t4g.medium", "t4g.large", "t4g.xlarge"]
             # - key: "karpenter.k8s.aws/instance-category"
@@ -230,21 +234,18 @@ resource "kubectl_manifest" "karpenter_node_pool" {
             # - key: "karpenter.k8s.aws/instance-cpu"
             #   operator: In
             #   values: ["1", "2"]
-            # - key: "karpenter.k8s.aws/instance-hypervisor"
-            #   operator: In
-            #   values: ["nitro"]
-            # - key: karpenter.k8s.aws/instance-family
-            #   operator: In
-            #   values: ["t4g"]
+            - key: "karpenter.k8s.aws/instance-hypervisor"
+              operator: In
+              values: ["nitro"]
             - key: "kubernetes.io/arch"
               operator: In
               values: ["arm64"]
             - key: karpenter.sh/capacity-type
               operator: In
               values: ["on-demand"]
-            # - key: "karpenter.k8s.aws/instance-generation"
-            #   operator: Gt
-            #   values: ["1"]
+            - key: "karpenter.k8s.aws/instance-generation"
+              operator: Gt
+              values: ["1"]
       limits:
         cpu: 1000
         memory: 1000Gi

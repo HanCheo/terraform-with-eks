@@ -28,7 +28,7 @@ module eks {
 	default_node_group_instance = {
 		ami_type = "AL2_ARM_64"
 		disk_size = 10
-		instance_types = ["t4g.xlarge"]
+		instance_types = ["t4g.large"]
 		node_group_arn = "arn:aws:iam::058264332540:role/OYG_ServiceRoleForAmazonEKSNodeGroup"
 	}
 
