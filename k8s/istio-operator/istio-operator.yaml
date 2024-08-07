@@ -17,7 +17,17 @@ spec:
         DD_REMOTE_CONFIGURATION_ENABLED: "true"
   components:
     cni:
+      # Installation in kube-system is recommended to ensure the system-node-critical priorityClassName can be used. 
+      # You can install in other namespace only on K8S clusters that allow 'system-node-critical' outside of kube-system.
+      namespace: kube-system
       enabled: true
+      k8s:
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            memory: 512Mi
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
@@ -25,11 +35,11 @@ spec:
           hpaSpec:
             minReplicas: 1
           resources:
-            limits:
-              memory: 512Mi
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 128Mi
+            limits:
+              memory: 1024Mi
           serviceAnnotations:
             service.beta.kubernetes.io/aws-load-balancer-type: nlb
             alb.ingress.kubernetes.io/healthcheck-path: /healthz/ready
@@ -51,8 +61,8 @@ spec:
         hpaSpec:
           minReplicas: 1
         resources:
-          limits:
-            memory: 512Mi
           requests:
             cpu: 100m
-            memory: 256Mi
+            memory: 512Mi
+          limits:
+            memory: 1024Mi

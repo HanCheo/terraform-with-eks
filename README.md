@@ -2,7 +2,7 @@
 
 ## 설정변경
 
-`main.tf` 파일에 vpc 설정과 node instance의 사이즈를 조절할수 있습니다
+`infrastructure/main.tf` 파일에 vpc 설정과 node instance의 사이즈를 조절할수 있습니다
 
 ```hcl
 provider "aws" {
