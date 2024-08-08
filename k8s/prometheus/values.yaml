@@ -265,7 +265,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: true
+  enabled: false
 
   ## Annotations for Alertmanager
   ##
@@ -1094,7 +1094,7 @@ grafana:
         # datasourceUid: Jaeger
         # traceIdLabelName: trace_id
       alertmanager:
-        enabled: true
+        enabled: false
         name: Alertmanager
         uid: alertmanager
         handleGrafanaManagedAlerts: false
@@ -1125,6 +1125,11 @@ grafana:
   #   type: prometheus
   #   url: https://{{ printf "%s-prometheus.svc" .Release.Name }}:9090
   #   version: 1
+
+  # Flag to mark provisioned data sources for deletion if they are no longer configured.
+  # It takes no effect if data sources are already listed in the deleteDatasources section.
+  # ref: https://grafana.com/docs/grafana/latest/administration/provisioning/#example-data-source-config-file
+  prune: false
 
   ## Passed to grafana subchart and used by servicemonitor below
   ##
@@ -2875,7 +2880,7 @@ prometheusOperator:
   thanosImage:
     registry: quay.io
     repository: thanos/thanos
-    tag: v0.35.1
+    tag: v0.36.0
     sha: ""
 
   ## Set a Label Selector to filter watched prometheus and prometheusAgent
@@ -3676,7 +3681,7 @@ prometheus:
 
     ## How long to retain metrics
     ##
-    retention: 3d
+    retention: 10d
 
     ## Maximum size of metrics
     ##
@@ -4453,7 +4458,7 @@ thanosRuler:
     image:
       registry: quay.io
       repository: thanos/thanos
-      tag: v0.35.1
+      tag: v0.36.0
       sha: ""
 
     ## Namespaces to be selected for PrometheusRules discovery.

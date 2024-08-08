@@ -12,7 +12,7 @@ module "eks" {
 	cluster_name = var.cluster_name
 	cluster_version = var.cluster_version
 
-	cluster_endpoint_private_access = false
+	cluster_endpoint_private_access = true
 	cluster_endpoint_public_access = true
 
 	include_oidc_root_ca_thumbprint = true
@@ -65,7 +65,7 @@ module "eks" {
         }
       })
 		}
-  }	
+  }
 
 	eks_managed_node_group_defaults = var.default_node_group_instance
 
@@ -116,4 +116,13 @@ output "configure_kubectl" {
   value       = "aws eks --region ap-northeast-2 update-kubeconfig --name ${var.cluster_name}"
 }
 
+output "cluster_name" {
+  description = "The name of the EKS cluster"
+  value       = module.eks.cluster_name
+}
+
+output "cluster_endpoint" {
+  description = "value of the endpoint for the Kubernetes API server"
+  value = module.eks.cluster_endpoint
+}
 

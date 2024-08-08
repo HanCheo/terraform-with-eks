@@ -29,7 +29,7 @@ module "karpenter" {
 ################################################################################
 
 resource "helm_release" "karpenter" {
-  create_namespace = true
+  create_namespace    = true
   namespace           = "karpenter"
   name                = "karpenter"
   repository          = "oci://public.ecr.aws/karpenter"
