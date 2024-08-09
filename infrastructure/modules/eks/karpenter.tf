@@ -30,7 +30,7 @@ module "karpenter" {
 
 resource "helm_release" "karpenter" {
   create_namespace    = true
-  namespace           = "karpenter"
+  namespace           = "kube-system"
   name                = "karpenter"
   repository          = "oci://public.ecr.aws/karpenter"
   chart               = "karpenter"
@@ -39,6 +39,7 @@ resource "helm_release" "karpenter" {
 
   values = [
     <<-EOT
+    replicas: 1
     affinity:
       nodeAffinity:
         requiredDuringSchedulingIgnoredDuringExecution:
@@ -119,7 +120,7 @@ resource "kubectl_manifest" "karpenter_node_pool" {
           requirements:
             - key: node.kubernetes.io/instance-type	
               operator: In
-              values: ["t4g.medium", "t4g.large", "t4g.xlarge"]
+              values: ["t4g.large", "t4g.xlarge"]
             # - key: "karpenter.k8s.aws/instance-category"
             #   operator: In
             #   values: ["t"]

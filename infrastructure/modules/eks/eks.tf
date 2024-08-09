@@ -47,6 +47,7 @@ module "eks" {
     eks-pod-identity-agent = {
 			more_recent = true
 		}
+
     vpc-cni                = {
 			before_compute = true
 			more_recent = true

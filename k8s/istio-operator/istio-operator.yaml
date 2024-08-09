@@ -33,7 +33,7 @@ spec:
         enabled: true
         k8s:
           hpaSpec:
-            minReplicas: 1
+            minReplicas: 2
           resources:
             requests:
               cpu: 100m
@@ -59,7 +59,7 @@ spec:
               }
             ]
         hpaSpec:
-          minReplicas: 1
+          minReplicas: 2
         resources:
           requests:
             cpu: 100m
